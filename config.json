@@ -1,0 +1,17 @@
+{
+    "modbus_settings": {
+      "port": 502,
+      "timeout": 1,
+      "retries": 1
+    },
+    "network_scan": {
+      "subnet": "192.168.1.0/25",
+      "scan_timeout": 0.5
+    },
+    "protocols": [
+        "modbus",
+        "opc",
+        "mqtt"
+    ],
+    "connected_devices": []
+}

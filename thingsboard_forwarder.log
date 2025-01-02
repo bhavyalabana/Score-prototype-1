@@ -1,0 +1,11 @@
+2024-12-20 12:47:47,588 - INFO - Started Fetching_data.py successfully
+2024-12-20 12:47:47,589 - INFO - Started CSV file monitoring
+2024-12-20 12:47:49,468 - INFO - Saved device tokens to file
+2024-12-20 12:47:49,506 - INFO - Successfully sent data to ThingsBoard for device 192.168.1.55
+2024-12-20 12:47:49,707 - INFO - Saved device tokens to file
+2024-12-20 12:47:49,758 - INFO - Successfully sent data to ThingsBoard for device 192.168.1.70
+2024-12-20 12:47:54,366 - INFO - Successfully sent data to ThingsBoard for device 192.168.1.55
+2024-12-20 12:47:54,417 - INFO - Successfully sent data to ThingsBoard for device 192.168.1.70
+2024-12-20 12:47:59,378 - INFO - Successfully sent data to ThingsBoard for device 192.168.1.55
+2024-12-20 12:47:59,430 - INFO - Successfully sent data to ThingsBoard for device 192.168.1.70
+2024-12-20 12:48:04,225 - INFO - Stopping the application...
