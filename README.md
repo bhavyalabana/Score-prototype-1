@@ -1,85 +1,45 @@
-# Score-prototype-1
-# Modbus Network Integration
+# Modbus Data Collection and ThingsBoard Integration System
 
-## Overview
-This project provides a modular framework for:
-- Scanning a network for Modbus-compatible devices.
-- Fetching data from Modbus registers.
-- Sending the data to ThingsBoard for visualization and control.
-
-The setup supports additional protocols such as OPC and MQTT, making it extensible for future use cases.
-
----
+A comprehensive system for scanning Modbus networks, collecting device data, and forwarding it to ThingsBoard IoT platform. The system automatically discovers Modbus devices on the network, establishes connections, collects real-time data, and forwards it to ThingsBoard for visualization and analysis.
 
 ## Features
-- **Network Scanning**: Identifies Modbus devices on a specified subnet.
-- **Data Fetching**: Reads specified registers (`current`, `voltage`, `temperature`, `power`) and stores the data locally in a CSV file.
-- **ThingsBoard Integration**: Dynamically creates or updates devices in ThingsBoard and sends telemetry data.
-- **Protocol Modularity**: Additional protocols can be supported by adding functions in the `protocol_functions.py` file.
 
----
+- Automatic network scanning and Modbus device discovery
+- Real-time data collection from multiple Modbus devices
+- Automatic device registration and management in ThingsBoard
+- Configurable polling intervals and connection parameters
+- CSV data logging for local storage
+- Robust error handling and automatic reconnection
+- Real-time monitoring through ThingsBoard dashboards
 
-## Repository Structure
-```plaintext
-📂 scripts
-    ├── modbus_network_scan_script.py  # Scans the network for Modbus devices
-    ├── Fetching_data.py               # Fetches data from Modbus devices
-    ├── Data_to_thingsboard.py         # Forwards data to ThingsBoard
-    ├── protocol_functions.py          # Contains protocol-specific functions
-📂 config
-    ├── config.json                    # Configuration for scanning and fetching
-📂 data
-    ├── connected_devices.json         # Stores discovered devices
-    ├── modbus_data.csv                # Stores fetched data
-📂 logs
-    ├── thingsboard_forwarder.log      # Logging for ThingsBoard integration
-README.md                              # Documentation for the project
-requirements.txt                       # Python dependencies
-LICENSE                                # Project license
-```
+## Architecture
 
----
+The system consists of several Python scripts working together:
+
+1. `modbus_network_scan_script.py`: Scans the network for Modbus devices
+2. `protocol_functions.py`: Contains protocol-specific connection testing functions
+3. `Fetching_data.py`: Manages Modbus connections and data collection
+4. `Data_to_thingsboard.py`: Handles data forwarding to ThingsBoard
+5. `config.json`: Central configuration file
 
 ## Prerequisites
-- Python 3.8 or higher
-- ThingsBoard Community Edition installed
-- Modbus-compatible devices on the network
 
----
+- Python 3.7 or higher
+- ThingsBoard Community Edition or Professional Edition
+- Network access to Modbus devices
 
-## Setup Instructions
+## Required Python Packages
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/your-username/Modbus-Network-Integration.git
-   cd Modbus-Network-Integration
-   ```
+```bash
+pip install pymodbus
+pip install requests
+pip install watchdog
+```
 
-2. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Configuration
 
-3. **Configure Settings**
-   - Update `config/config.json` with your network and Modbus settings.
+### 1. Edit config.json
 
-4. **Run the Scripts**
-   - **Network Scan**: Identify Modbus devices on the subnet.
-     ```bash
-     python scripts/modbus_network_scan_script.py
-     ```
-   - **Fetch Data**: Collect data from connected devices.
-     ```bash
-     python scripts/Fetching_data.py
-     ```
-   - **Send to ThingsBoard**: Forward data to ThingsBoard.
-     ```bash
-     python scripts/Data_to_thingsboard.py
-     ```
-
----
-
-## Configuration File (`config/config.json`)
 ```json
 {
     "modbus_settings": {
@@ -100,29 +60,133 @@ LICENSE                                # Project license
 }
 ```
 
----
+### 2. Configure ThingsBoard Settings
 
-## Extending the Framework
-- **Adding a Protocol**:
-  1. Define a function in `protocol_functions.py` to check device compatibility.
-  2. Include the protocol in the `config.json` under the `protocols` list.
+In `Data_to_thingsboard.py`, update the following constants:
 
-- **Custom Data Fetching**:
-  - Modify `Fetching_data.py` to include additional parameters or logic.
+```python
+THINGSBOARD_HOST = "http://localhost:8080"  # Your ThingsBoard host
+admin_username = "tenant@thingsboard.org"    # Your admin username
+admin_password = "tenant"                    # Your admin password
+```
 
----
+## Setup Instructions
 
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd modbus-thingsboard-integration
+   ```
 
----
+2. Install required packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Contributions
-Contributions are welcome! Please open an issue or submit a pull request to improve the project.
+3. Configure your network settings in `config.json`
 
----
+4. Set up ThingsBoard:
+   - Install and start ThingsBoard
+   - Create an administrator account
+   - Update ThingsBoard credentials in the code
 
-## Acknowledgments
-- [ThingsBoard Community Edition](https://thingsboard.io/)
-- [Pymodbus Library](https://github.com/riptideio/pymodbus)
+5. Start the system:
+   ```bash
+   python Data_to_thingsboard.py
+   ```
 
+## How It Works
+
+1. **Network Discovery**:
+   - The system scans the configured subnet for Modbus devices
+   - Discovered devices are saved to `connected_devices.json`
+
+2. **Data Collection**:
+   - Establishes connections to discovered Modbus devices
+   - Collects data from specified registers
+   - Stores data in a local CSV file
+   - Parameters collected:
+     - Current
+     - Voltage
+     - Temperature
+     - Power
+
+3. **ThingsBoard Integration**:
+   - Automatically creates devices in ThingsBoard
+   - Generates and manages access tokens
+   - Forwards data as telemetry
+   - Maintains persistent device mapping
+
+## Monitoring and Logging
+
+- Main log file: `thingsboard_forwarder.log`
+- CSV data file: `modbus_data.csv`
+- Device tokens: `device_tokens.json`
+
+## Error Handling
+
+The system includes robust error handling for:
+- Network connectivity issues
+- Device communication failures
+- ThingsBoard connection problems
+- Automatic reconnection with configurable retries
+- Data persistence during outages
+
+## Customization
+
+### Modbus Register Mapping
+
+Modify the `PARAMETERS` dictionary in `Fetching_data.py`:
+
+```python
+PARAMETERS = {
+    "current": [30031, 30032],
+    "voltage": [30025, 30026],
+    "temperature": [30027, 30028],
+    "power": [30033, 30034]
+}
+```
+
+### Polling Interval
+
+Adjust `POLLING_INTERVAL` in `Fetching_data.py` (default: 5 seconds)
+
+### Reconnection Settings
+
+Modify in `Fetching_data.py`:
+```python
+MAX_RECONNECTION_ATTEMPTS = 3
+RECONNECTION_DELAY = 5  # seconds
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## Troubleshooting
+
+1. **No devices found**:
+   - Check network connectivity
+   - Verify Modbus port (default: 502)
+   - Confirm subnet configuration
+
+2. **ThingsBoard connection issues**:
+   - Verify ThingsBoard host address
+   - Check credentials
+   - Confirm ThingsBoard is running
+
+3. **Data not updating**:
+   - Check device connectivity
+   - Verify register addresses
+   - Review log files for errors
+
+
+## Author
+
+BHAVYA LABANA
+RnD Engineer
+PHDCOMM PVT LTD
